@@ -1,7 +1,44 @@
 from tkinter import *
+from tkinter import messagebox
+from random import randint, choice, shuffle
+import pyperclip
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
+letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
+           'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R',
+           'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+symbols = ['!', '#', '$', '%', '&', '(', ')', '*', '+']
+
+def generate_password():
+    password_letters = [choice(letters) for _ in range(randint(8, 10))]
+    password_symbols = [choice(symbols) for _ in range(randint(2, 4))]
+    password_numbers = [choice(numbers) for _ in range(randint(2, 4))]
+
+    password_list = password_letters + password_symbols + password_numbers
+    shuffle(password_list)
+
+    password = "".join(password_list)
+    password_entry.insert(0, password)
+    pyperclip.copy(password)
 
 # ---------------------------- SAVE PASSWORD ------------------------------- #
+def save():
+
+    website = website_entry.get()
+    email = email_entry.get()
+    password = password_entry.get()
+
+    if len(website) == 0 or len(email) == 0 or len(password) == 0:
+        messagebox.showinfo(title="Oops", message="Please fill all the fields")
+
+    else:
+        is_ok = messagebox.askokcancel(title=website, message=f"These are the details entered: \nEmail: {email}\n"
+                                                              f"Password: {password} \nIs it ok to save?")
+        if is_ok:
+            with open("data.txt","a") as file:
+                file.write(f"{website} |{email} |{password}\n")
+            website_entry.delete(0, END)
+            password_entry.delete(0, END)
 
 # ---------------------------- UI SETUP ------------------------------- #
 window = Tk()
@@ -31,17 +68,10 @@ email_entry.insert(END, "DummyEmail@gmail.com")
 password_entry = Entry(window, width=27)
 password_entry.grid(row=3, column=1)
 
-#Button
-generate_password_button = Button(window, text="Generate Password", width=14)
+#Buttons
+generate_password_button = Button(window, text="Generate Password", width=14, command=generate_password)
 generate_password_button.grid(row=3, column=2)
-add_button = Button(window, text="Add", width=38)
+add_button = Button(window, text="Add", width=38, command=save)
 add_button.grid(row=4, column=1,columnspan=2)
-
-
-
-
-
-
-
 
 window.mainloop()
