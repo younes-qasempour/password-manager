@@ -35,7 +35,7 @@ def save():
         }
     }
     if len(website) == 0 or len(email) == 0 or len(password) == 0:
-        messagebox.showinfo(title="Oops", message="Please fill all the fields")
+        messagebox.showinfo(title="Oops", message="Please fill all the fields.")
     else:
         try:
             with open("data.json", "r") as data_file:
@@ -50,6 +50,23 @@ def save():
         finally:
             website_entry.delete(0, END)
             password_entry.delete(0, END)
+
+# ---------------------------- FIND PASSWORD ------------------------------- #
+def find_password():
+
+    website = website_entry.get()
+    try:
+        with open("data.json", "r") as data_file:
+                data = json.load(data_file)
+    except FileNotFoundError:
+        messagebox.showinfo(title="Error", message="No data file found.")
+    else:
+        if website in data:
+            email = data[website]["email"]
+            password = data[website]["password"]
+            messagebox.showinfo(title=website, message=f"Email: {email}\nPassword: {password}")
+        else:
+            messagebox.showinfo(title="Error", message=f"No details for {website} exists.")
 
 # ---------------------------- UI SETUP ------------------------------- #
 window = Tk()
@@ -70,8 +87,8 @@ password_label = Label(window, text="Password:")
 password_label.grid(row=3, column=0)
 
 #Enteries
-website_entry = Entry(window, width=45)
-website_entry.grid(row=1, column=1, columnspan=2)
+website_entry = Entry(window, width=27)
+website_entry.grid(row=1, column=1)
 website_entry.focus()
 email_entry = Entry(window, width=45)
 email_entry.grid(row=2, column=1, columnspan=2)
@@ -84,5 +101,7 @@ generate_password_button = Button(window, text="Generate Password", width=14, co
 generate_password_button.grid(row=3, column=2)
 add_button = Button(window, text="Add", width=38, command=save)
 add_button.grid(row=4, column=1,columnspan=2)
+search_button = Button(window, text="Search", width=14, command=find_password)
+search_button.grid(row=1, column=2)
 
 window.mainloop()
